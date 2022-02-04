@@ -28,6 +28,8 @@ app.get('/user', User.getAll);
 
 app.get('/user/:id', User.getById);
 
+app.get('/categories', Categories.getAll);
+
 app.post('/categories', Categories.create);
 
 app.use(ErrorMiddleware.errorMiddleware);

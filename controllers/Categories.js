@@ -8,6 +8,12 @@ const create = rescue(async (req, res, next) => {
   return res.status(201).json(category);
 });
 
+const getAll = rescue(async (_req, res, _next) => {
+  const categories = await Categories.getAll();
+  return res.status(200).json(categories);
+});
+
 module.exports = {
   create,
+  getAll,
 };
