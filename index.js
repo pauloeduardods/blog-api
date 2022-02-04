@@ -18,6 +18,8 @@ app.get('/', (_request, response) => {
 
 app.post('/user', User.create);
 
+app.post('/login', User.login);
+
 app.use(errorMiddleware.errorMiddleware);
 
 server.use(PATH, app);
