@@ -16,7 +16,21 @@ const login = rescue(async (req, res, next) => {
   return res.status(200).json({ token });
 });
 
+const getAll = rescue(async (_req, res, _next) => {
+  const users = await User.getAll();
+  res.status(200).json(users);
+});
+
+const getById = rescue(async (req, res, next) => {
+  const { id } = req.params;
+  const user = await User.getById(id);
+  if (user.errCode) return next(user);
+  res.status(200).json(user);
+});
+
 module.exports = {
   create,
   login,
+  getAll,
+  getById,
 };

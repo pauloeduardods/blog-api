@@ -13,6 +13,22 @@ const generateToken = ({ name, email }) => {
   return token;
 };
 
+const tokenVerify = (token) => {
+  const options = {
+    expiresIn: '1d',
+    algorithm: 'HS256',
+  };
+  try {
+    const result = jwt.verify(token, process.env.JWT_SECRET, options);
+    if (!result) return false;
+    const { name, email } = result;
+    return { name, email };
+  } catch (err) {
+    return false;
+  }
+};
+
 module.exports = {
   generateToken,
+  tokenVerify,
 };

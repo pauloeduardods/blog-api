@@ -22,11 +22,25 @@ async function login({ email, password }) {
   const passwordValidation = await argon.verify(user.password, password, { type: argon.argon2id });
   if (!passwordValidation) return { errCode: 400, message: 'Invalid fields' };
   const token = generateToken({ name: user.displayName, email: user.email });
-  console.log(token);
   return { token };
+}
+
+async function getAll() {
+  const users = await Users.findAll();
+  return users;
+}
+
+async function getById(id) {
+  const user = await Users.findOne({ where: { id } });
+  console.log(user);
+  if (!user) return { errCode: 404, message: 'User does not exist' };
+  delete user.password;
+  return user;
 }
 
 module.exports = {
   create,
   login,
+  getAll,
+  getById,
 };

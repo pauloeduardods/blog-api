@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const errorMiddleware = require('./controllers/errorMiddleware');
+const ErrorMiddleware = require('./middlewares/ErrorMiddleware');
+const { tokenAuthentication } = require('./middlewares/AuthMiddleware');
 const User = require('./controllers/User');
 
 const PORT = process.env.PORT || 3000;
@@ -20,7 +21,13 @@ app.post('/user', User.create);
 
 app.post('/login', User.login);
 
-app.use(errorMiddleware.errorMiddleware);
+app.use(tokenAuthentication);
+
+app.get('/user', User.getAll);
+
+app.get('/user/:id', User.getById);
+
+app.use(ErrorMiddleware.errorMiddleware);
 
 server.use(PATH, app);
 server.listen(PORT, () => console.log(`Ouvindo porta ${PORT}!`));
