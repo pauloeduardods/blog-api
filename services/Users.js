@@ -32,7 +32,6 @@ async function getAll() {
 
 async function getById(id) {
   const user = await Users.findOne({ where: { id } });
-  console.log(user);
   if (!user) return { errCode: 404, message: 'User does not exist' };
   delete user.password;
   return user;

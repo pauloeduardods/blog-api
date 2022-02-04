@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const ErrorMiddleware = require('./middlewares/ErrorMiddleware');
 const { tokenAuthentication } = require('./middlewares/AuthMiddleware');
-const User = require('./controllers/User');
+const User = require('./controllers/Users');
+const Categories = require('./controllers/Categories');
 
 const PORT = process.env.PORT || 3000;
 const PATH = process.env.API_PATH || '/';
@@ -26,6 +27,8 @@ app.use(tokenAuthentication);
 app.get('/user', User.getAll);
 
 app.get('/user/:id', User.getById);
+
+app.post('/categories', Categories.create);
 
 app.use(ErrorMiddleware.errorMiddleware);
 
