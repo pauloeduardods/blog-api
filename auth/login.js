@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 
-const generateToken = ({ name, email }) => {
+const generateToken = ({ id, name, email }) => {
   const payload = {
+    id,
     name,
     email,
   };
@@ -21,8 +22,8 @@ const tokenVerify = (token) => {
   try {
     const result = jwt.verify(token, process.env.JWT_SECRET, options);
     if (!result) return false;
-    const { name, email } = result;
-    return { name, email };
+    const { id, name, email } = result;
+    return { id, name, email };
   } catch (err) {
     return false;
   }

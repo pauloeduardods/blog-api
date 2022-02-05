@@ -5,21 +5,23 @@ const columns = (DataTypes) => ({
   },
   title: DataTypes.STRING,
   content: DataTypes.STRING,
-  userId: DataTypes.INTEGER,
-  published: {
-    type: DataTypes.DATE,
-    field: 'created_at',
-  },
-  updated: {
-    type: DataTypes.DATE,
-    field: 'updated_at',
-  },
+  userId: { type: DataTypes.INTEGER, foreignKey: true },
 });
 
+const options = {
+  createdAt: 'published',
+  updatedAt: 'updated',
+  underscored: true,
+  tableName: 'BlogPosts',
+};
+
 module.exports = (sequelize, DataTypes) => {
-  const BlogPosts = sequelize.define('BlogPosts', columns(DataTypes), {
-    underscored: true,
-    tableName: 'BlogPosts',
-  });
+  const BlogPosts = sequelize.define('BlogPosts', columns(DataTypes), options);
+  BlogPosts.associate = (models) => {
+    BlogPosts.belongsTo(models.Users, {
+      foreignKey: 'userId',
+      as: 'User',
+    });
+  };
   return BlogPosts;
 };

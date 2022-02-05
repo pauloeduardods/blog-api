@@ -23,7 +23,7 @@ async function login({ email, password }) {
   // const passwordValidation = await argon.verify(user.password, password, { type: argon.argon2id });
   const passwordValidation = password === user.password;
   if (!passwordValidation) return { errCode: 400, message: 'Invalid fields' };
-  const token = generateToken({ name: user.displayName, email: user.email });
+  const token = generateToken({ id: user.id, name: user.displayName, email: user.email });
   return { token };
 }
 

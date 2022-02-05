@@ -4,6 +4,7 @@ const ErrorMiddleware = require('./middlewares/ErrorMiddleware');
 const { tokenAuthentication } = require('./middlewares/AuthMiddleware');
 const User = require('./controllers/Users');
 const Categories = require('./controllers/Categories');
+const Posts = require('./controllers/Posts');
 
 const PORT = process.env.PORT || 3000;
 const PATH = process.env.API_PATH || '/';
@@ -31,6 +32,8 @@ app.get('/user/:id', User.getById);
 app.get('/categories', Categories.getAll);
 
 app.post('/categories', Categories.create);
+
+app.post('/post', Posts.create);
 
 app.use(ErrorMiddleware.errorMiddleware);
 
