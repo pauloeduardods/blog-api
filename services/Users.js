@@ -39,9 +39,15 @@ async function getById(id) {
   return user;
 }
 
+async function deleteUser(id) {
+  await Users.destroy({ where: { id } });
+  return id;
+}
+
 module.exports = {
   create,
   login,
   getAll,
   getById,
+  deleteUser,
 };

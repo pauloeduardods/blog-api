@@ -29,6 +29,8 @@ app.get('/user', User.getAll);
 
 app.get('/user/:id', User.getById);
 
+app.delete('/user/me', User.deleteUser);
+
 app.get('/categories', Categories.getAll);
 
 app.post('/categories', Categories.create);

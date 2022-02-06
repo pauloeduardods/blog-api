@@ -28,9 +28,17 @@ const getById = rescue(async (req, res, next) => {
   res.status(200).json(user);
 });
 
+const deleteUser = rescue(async (req, res, next) => {
+  const userId = req.user.id;
+  const result = await User.deleteUser(userId);
+  if (result.errCode) return next(result);
+  res.status(204).json(result);
+});
+
 module.exports = {
   create,
   login,
   getAll,
   getById,
+  deleteUser,
 };
