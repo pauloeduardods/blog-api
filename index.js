@@ -39,6 +39,8 @@ app.get('/post', Posts.getAll);
 
 app.get('/post/:id', Posts.getById);
 
+app.put('/post/:id', Posts.update);
+
 app.use(ErrorMiddleware.errorMiddleware);
 
 server.use(PATH, app);

@@ -69,8 +69,27 @@ async function getById(id) {
   return post;
 }
 
+async function update(id, userId, { title, content, categoryIds }) {
+  if (categoryIds) return { errCode: 400, message: 'Categories cannot be edited' };
+  if (userId !== (await BlogPosts.findByPk(id)).userId) { 
+    return { errCode: 401, message: 'Unauthorized user' };
+  }
+  if (postValidation({ title, content }).errCode) return postValidation({ title, content });
+  const updateResult = await BlogPosts.update({
+    title,
+    content,
+    updated: new Date().toISOString(),
+  }, { where: { id } });
+  if (updateResult[0] === 0) return { errCode: 404, message: 'Post does not exist' };
+  const postUpdated = await BlogPosts.findByPk(id, options);
+  return postUpdated;
+}
+
+// update(1, { title: 'teste', content: 'teste' });
+
 module.exports = {
   create,
   getAll,
   getById,
+  update,
 };
