@@ -44,24 +44,33 @@ async function create({ title, content, categoryIds }, userId) {
   }
 }
 
+const options = {
+  attributes: ['id', 'title', 'content', 'published', 'updated', 'userId'],
+  include: [{
+    model: Users,
+    as: 'user',
+    attributes: { exclude: ['password'] },
+  },
+  {
+    model: Categories,
+    as: 'categories',
+    through: { attributes: [] },
+  }],
+};
+
 async function getAll() {
-  const posts = await BlogPosts.findAll({
-    attributes: ['id', 'title', 'content', 'published', 'updated', 'userId'],
-    include: [{
-      model: Users,
-      as: 'user',
-      attributes: { exclude: ['password'] },
-    },
-    {
-      model: Categories,
-      as: 'categories',
-      through: { attributes: [] },
-    }],
-  });
+  const posts = await BlogPosts.findAll(options);
   return posts;
+}
+
+async function getById(id) {
+  const post = await BlogPosts.findByPk(id, options);
+  if (!post || post.length === 0) return { errCode: 404, message: 'Post does not exist' };
+  return post;
 }
 
 module.exports = {
   create,
   getAll,
+  getById,
 };

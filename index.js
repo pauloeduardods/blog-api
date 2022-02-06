@@ -37,6 +37,8 @@ app.post('/post', Posts.create);
 
 app.get('/post', Posts.getAll);
 
+app.get('/post/:id', Posts.getById);
+
 app.use(ErrorMiddleware.errorMiddleware);
 
 server.use(PATH, app);
