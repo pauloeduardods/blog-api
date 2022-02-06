@@ -32,9 +32,18 @@ const update = rescue(async (req, res, next) => {
   return res.status(200).json(result);
 });
 
+const deletePost = rescue(async (req, res, next) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+  const result = await Posts.deletePost(id, userId);
+  if (result.errCode) return next(result);
+  return res.status(204).json(result);
+});
+
 module.exports = {
   create,
   getAll,
   getById,
   update,
+  deletePost,
 };

@@ -85,11 +85,21 @@ async function update(id, userId, { title, content, categoryIds }) {
   return postUpdated;
 }
 
-// update(1, { title: 'teste', content: 'teste' });
+async function deletePost(postId, userId) {
+  const post = await BlogPosts.findByPk(postId);
+  if (!post || post.length === 0) return { errCode: 404, message: 'Post does not exist' };
+  if (userId !== post.userId) { 
+    return { errCode: 401, message: 'Unauthorized user' };
+  }
+  const result = await BlogPosts.destroy({ where: { id: postId } });
+  if (result === 0) return { errCode: 404, message: 'Post does not exist' };
+  return { id: postId };
+}
 
 module.exports = {
   create,
   getAll,
   getById,
   update,
+  deletePost,
 };

@@ -41,6 +41,8 @@ app.get('/post/:id', Posts.getById);
 
 app.put('/post/:id', Posts.update);
 
+app.delete('/post/:id', Posts.deletePost);
+
 app.use(ErrorMiddleware.errorMiddleware);
 
 server.use(PATH, app);
