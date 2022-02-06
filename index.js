@@ -35,6 +35,8 @@ app.post('/categories', Categories.create);
 
 app.post('/post', Posts.create);
 
+app.get('/post', Posts.getAll);
+
 app.use(ErrorMiddleware.errorMiddleware);
 
 server.use(PATH, app);

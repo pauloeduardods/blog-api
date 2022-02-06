@@ -10,6 +10,13 @@ const create = rescue(async (req, res, next) => {
   return res.status(201).json(result);
 });
 
+const getAll = rescue(async (_req, res, next) => {
+  const posts = await Posts.getAll();
+  if (posts.errCode) return next(posts);
+  return res.status(200).json(posts);
+});
+
 module.exports = {
   create,
+  getAll,
 };
