@@ -1,17 +1,47 @@
-const { BlogPosts, PostsCategories } = require('../models');
+const { BlogPosts, PostsCategories, Categories, sequelize } = require('../models');
+const { postValidation } = require('../validations/Post');
 
-async function create({ title, content, categoryIds }, userId) {
-  const post = { 
-    title, 
-    content, 
+async function categoryValidation(categoryIds) {
+  if (!categoryIds) {
+    return { errCode: 400, message: '"categoryIds" is required' };
+  }
+  const result = await Promise.all(categoryIds.map(async (categoryId) => {
+    const category = await Categories.findOne({ where: { id: categoryId } });
+    if (!category) {
+      return { errCode: 400, message: '"categoryIds" is required' };
+    }
+    return true;
+  }));
+  return result.some((category) => category.errCode)
+    ? { errCode: 400, message: '"categoryIds" not found' } : true;
+}
+
+function createPostObj({ title, content, userId }) {
+  return {
+    title,
+    content,
     userId,
     published: new Date().toISOString(),
     updated: new Date().toISOString(),
   };
-  const { null: id, dataValues } = await BlogPosts.create(post);
-  await Promise.all(categoryIds.map((categoryId) =>
-    PostsCategories.create({ postId: id, categoryId })));
-  return { id, userId, title: dataValues.title, content: dataValues.content };
+}
+
+async function create({ title, content, categoryIds }, userId) {
+  const validation = postValidation({ title, content });
+  if (validation.errCode) return validation;
+  const catValidation = await categoryValidation(categoryIds);
+  if (catValidation.errCode) return catValidation;
+  const t = await sequelize.transaction();
+  try {
+    const post = createPostObj({ title, content, userId });
+    const { null: id, dataValues } = await BlogPosts.create(post, { transaction: t });
+    await Promise.all(categoryIds.map((categoryId) =>
+      PostsCategories.create({ postId: id, categoryId }, { transaction: t })));
+    await t.commit();
+    return { id, userId, title: dataValues.title, content: dataValues.content };
+  } catch (err) {
+    await t.rollback();
+  }
 }
 
 module.exports = {
