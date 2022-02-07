@@ -1,11 +1,11 @@
 // const argon = require('argon2');
 const { generateToken } = require('../auth/login');
 const { Users } = require('../models');
-const UserValidator = require('../validations/User');
+const { loginSchema, newUserSchema } = require('../schemas/Users');
 
 async function create({ displayName, email, password, image }) {
-  const { errCode, message } = UserValidator.userValidator(displayName, email, password);
-  if (errCode) return { errCode, message };
+  const validator = newUserSchema.validate({ displayName, email, password });
+  if (validator.error) return { errCode: 400, message: validator.error.message };
   const userWithEmail = await Users.findOne({ where: { email } });
   if (userWithEmail) return { errCode: 409, message: 'User already registered' };
   // const digest = await argon.hash(password, { type: argon.argon2id });
@@ -16,8 +16,8 @@ async function create({ displayName, email, password, image }) {
 }
 
 async function login({ email, password }) {
-  const { errCode, message } = UserValidator.loginValidator(email, password);
-  if (errCode) return { errCode, message };
+  const validator = loginSchema.validate({ email, password });
+  if (validator.error) return { errCode: 400, message: validator.error.message };
   const user = await Users.findOne({ where: { email } });
   if (!user) return { errCode: 400, message: 'Invalid fields' };
   // const passwordValidation = await argon.verify(user.password, password, { type: argon.argon2id });

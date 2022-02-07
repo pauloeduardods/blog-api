@@ -1,20 +1,19 @@
 const { Op } = require('sequelize');
 const { BlogPosts, PostsCategories, Categories, sequelize, Users } = require('../models');
-const { postValidation } = require('../validations/Post');
+const { postSchema, updatePostSchema } = require('../schemas/Posts');
 
 async function categoryValidation(categoryIds) {
-  if (!categoryIds) {
-    return { errCode: 400, message: '"categoryIds" is required' };
-  }
   const result = await Promise.all(categoryIds.map(async (categoryId) => {
     const category = await Categories.findOne({ where: { id: categoryId } });
     if (!category) {
-      return { errCode: 400, message: '"categoryIds" is required' };
+      return false;
     }
     return true;
   }));
-  return result.some((category) => category.errCode)
-    ? { errCode: 400, message: '"categoryIds" not found' } : true;
+  if (result.some((category) => !category)) {
+    return { error: { message: '"categoryIds" not found' } };
+  }
+  return {};
 }
 
 function createPostObj({ title, content, userId }) {
@@ -28,10 +27,10 @@ function createPostObj({ title, content, userId }) {
 }
 
 async function create({ title, content, categoryIds }, userId) {
-  const validation = postValidation({ title, content });
-  if (validation.errCode) return validation;
+  const validation = postSchema.validate({ title, content, categoryIds });
+  if (validation.error) return { errCode: 400, message: validation.error.message };
   const catValidation = await categoryValidation(categoryIds);
-  if (catValidation.errCode) return catValidation;
+  if (catValidation.error) return { errCode: 400, message: catValidation.error.message };
   const t = await sequelize.transaction();
   try {
     const post = createPostObj({ title, content, userId });
@@ -75,7 +74,8 @@ async function update(id, userId, { title, content, categoryIds }) {
   if (userId !== (await BlogPosts.findByPk(id)).userId) { 
     return { errCode: 401, message: 'Unauthorized user' };
   }
-  if (postValidation({ title, content }).errCode) return postValidation({ title, content });
+  const validation = updatePostSchema.validate({ title, content });
+  if (validation.error) return { errCode: 400, message: validation.error.message };
   const updateResult = await BlogPosts.update({
     title,
     content,

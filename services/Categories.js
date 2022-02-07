@@ -1,7 +1,9 @@
 const { Categories } = require('../models');
+const { categorySchema } = require('../schemas/Categories');
 
 async function create({ name }) {
-  if (!name) return { errCode: 400, message: '"name" is required' };
+  const validation = categorySchema.validate({ name });
+  if (validation.error) return { errCode: 400, message: validation.error.message };
   const { null: id, dataValues } = await Categories.create({ name });
   return { ...dataValues, id };
 }
