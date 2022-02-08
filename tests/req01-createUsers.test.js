@@ -1,3 +1,5 @@
+// Todos os testes aqui foram feitos pela equipe da @beTrybe
+
 const frisby = require('frisby');
 const shell = require('shelljs');
 
