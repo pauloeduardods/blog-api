@@ -10,7 +10,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - //home/$USER/mysql/blog_db:/var/lib/mysql
+      - /home/$USER/mysql/blog_db:/var/lib/mysql
     networks:
       - backend_blog_api
     healthcheck:
