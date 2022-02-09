@@ -14,10 +14,10 @@ services:
       - backend_blog_api
     healthcheck:
       test: ["CMD", "mysql", "-u", "$MYSQL_USER", "-p$MYSQL_PASSWORD", "-e", "SELECT 1"]
-      interval: 10s
-      timeout: 20s
+      interval: 1m30s
+      timeout: 30s
       retries: 5
-      start_period: 15s
+      start_period: 30s
   backend:
     depends_on:
       db:
