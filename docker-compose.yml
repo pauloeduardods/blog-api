@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: mysql/mysql-server:8.0
+    image: mysql/mysql-server:8.0.27
     restart: unless-stopped
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
@@ -14,7 +14,7 @@ services:
       - backend_blog_api
     healthcheck:
       test: ["CMD", "mysql", "-u", "$MYSQL_USER", "-p$MYSQL_PASSWORD", "-e", "SELECT 1"]
-      interval: 1m30s
+      interval: 60s
       timeout: 30s
       retries: 5
       start_period: 30s
@@ -39,4 +39,4 @@ services:
       - backend_blog_api
 networks:
   backend_blog_api:
-    driver: bridge 
+    driver: bridge
